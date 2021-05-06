@@ -1,5 +1,3 @@
-# /Applications/ffmpeg -i output.mp3 -ab 160k -ac 1 -ar 16000 -vn outputtest.flac
-# ['ffmpeg', '-i', 'output.mp3', '-ab', '160k', '-ac', '1', '-ar', '16000', '-vn', 'outputtest.flac'], stdout=subprocess.PIPE)
 import openai
 import os
 import pyaudio
@@ -48,13 +46,13 @@ wf.writeframes(b''.join(frames))
 wf.close()
 
 authenticator = IAMAuthenticator(
-    'S5V8lDgmsEXrfH8JvqqaeD7A3N8NSO9QDPsXqf0zZAvD')
+    '<watson apikey>')
 speech_to_text = SpeechToTextV1(
     authenticator=authenticator
 )
 
 speech_to_text.set_service_url(
-    'https://api.us-south.speech-to-text.watson.cloud.ibm.com/instances/7bdf3924-c17a-4d02-8902-fbe2c6a2668d')
+    '<watsonapi url>')
 
 
 class MyRecognizeCallback(RecognizeCallback):
@@ -75,7 +73,7 @@ class MyRecognizeCallback(RecognizeCallback):
 
 myRecognizeCallback = MyRecognizeCallback()
 
-with open('/Users/matsudatakashidai/Desktop/Python/sample.wav',
+with open('sample.wav',
           'rb') as audio_file:
     audio_source = AudioSource(audio_file)
     response = speech_to_text.recognize_using_websocket(
@@ -92,7 +90,7 @@ with open('result_logs.txt') as f:
     print(last_result_log)
 
 
-openai.api_key = "sk-n0wdk6TR03hs9O6lQlBQlWO7WI1uUux3xBi3PFOl"
+openai.api_key = "<openai apikey>"
 
 start_sequence = '\nAI: '
 restart_sequence = '\nHuman: '
