@@ -48,13 +48,13 @@ wf.writeframes(b''.join(frames))
 wf.close()
 
 authenticator = IAMAuthenticator(
-    '<watson apikey>')
+    'S5V8lDgmsEXrfH8JvqqaeD7A3N8NSO9QDPsXqf0zZAvD')
 speech_to_text = SpeechToTextV1(
     authenticator=authenticator
 )
 
 speech_to_text.set_service_url(
-    '<watsonapi url>')
+    'https://api.us-south.speech-to-text.watson.cloud.ibm.com/instances/7bdf3924-c17a-4d02-8902-fbe2c6a2668d')
 
 
 class MyRecognizeCallback(RecognizeCallback):
@@ -75,7 +75,7 @@ class MyRecognizeCallback(RecognizeCallback):
 
 myRecognizeCallback = MyRecognizeCallback()
 
-with open('sample.wav',
+with open('/Users/matsudatakashidai/Desktop/Python/sample.wav',
           'rb') as audio_file:
     audio_source = AudioSource(audio_file)
     response = speech_to_text.recognize_using_websocket(
@@ -92,7 +92,7 @@ with open('result_logs.txt') as f:
     print(last_result_log)
 
 
-openai.api_key = '<openai apikey>'
+openai.api_key = "sk-n0wdk6TR03hs9O6lQlBQlWO7WI1uUux3xBi3PFOl"
 
 start_sequence = '\nAI: '
 restart_sequence = '\nHuman: '
@@ -109,12 +109,14 @@ response = openai.Completion.create(
 )
 
 reply = response['choices'][0]['text']
-print(reply)
+print(reply.replace(' ', ''))
 t = Tokenizer()
 kks = pykakasi.kakasi()
 kana_text = ''
 
-print(list(t.tokenize(reply, wakati=True)))
+print(list(t.tokenize(reply.replace(' ', ''), wakati=True)))
 
-# for token in t.tokenize(reply):
-#     kana_text += kks.convert(token)[0]['hira']
+for token in list(t.tokenize(reply.replace(' ', ''), wakati=True)):
+    kana_text += kks.convert(token)[0]['hira']
+
+print(kana_text)
