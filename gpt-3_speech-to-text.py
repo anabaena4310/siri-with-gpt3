@@ -1,5 +1,7 @@
+from gtts import gTTS
+from mutagen.mp3 import MP3 as mp3
+import pygame
 import openai
-import os
 import pyaudio
 import wave
 import time
@@ -14,7 +16,7 @@ FORMAT = pyaudio.paInt16  # 16bit
 CHANNELS = 1             # monaural
 RATE = 48000             # sampling frequency [Hz]
 
-time = 5  # record time [s]
+record_time = 5  # record time [s]
 output_path = "./sample.wav"
 
 p = pyaudio.PyAudio()
@@ -28,7 +30,7 @@ print("recording ...")
 
 frames = []
 
-for i in range(0, int(RATE / 1024 * time)):
+for i in range(0, int(RATE / 1024 * record_time)):
     data = stream.read(1024)
     frames.append(data)
 
@@ -87,7 +89,7 @@ with open('sample.wav',
 with open('result_logs.txt') as f:
     result_logs = f.readlines()
     last_result_log = result_logs[-1].replace('\n', '')
-    print(last_result_log)
+    print(last_result_log.replace(' ', ''))
 
 
 openai.api_key = "<openai apikey>"
@@ -97,7 +99,7 @@ restart_sequence = '\nHuman: '
 
 response = openai.Completion.create(
     engine='davinci',
-    prompt='Human: ' + last_result_log + '\nAI: ',
+    prompt='Human: ' + last_result_log.replace(' ', '') + '\nAI: ',
     temperature=0.9,
     max_tokens=50,
     top_p=1,
@@ -118,3 +120,19 @@ for token in list(t.tokenize(reply.replace(' ', ''), wakati=True)):
     kana_text += kks.convert(token)[0]['hira']
 
 print(kana_text)
+
+storepath = "<このpyファイルのあるフォルダパス>"
+
+inText = kana_text
+language = 'ja'
+output = gTTS(text=inText, lang=language, slow=False)
+storefile = storepath + "output.mp3"
+output.save(storefile)
+
+filename = storefile  # 再生したいmp3ファイル
+pygame.mixer.init()
+pygame.mixer.music.load(filename)  # 音源を読み込み
+mp3_length = mp3(filename).info.length  # 音源の長さ取得
+pygame.mixer.music.play(1)  # 再生開始。1の部分を変えるとn回再生(その場合は次の行の秒数も×nすること)
+time.sleep(mp3_length + 0.25)  # 再生開始後、音源の長さだけ待つ(0.25待つのは誤差解消)
+pygame.mixer.music.stop()  # 音源の長さ待ったら再生停止vv
