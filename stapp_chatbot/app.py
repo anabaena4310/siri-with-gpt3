@@ -1,5 +1,4 @@
 import streamlit as st
-import openai
 import pya3rt
 
 apikey = "DZZbHdU8i6DyNufqdG2UIvoHH0qtCewG"
