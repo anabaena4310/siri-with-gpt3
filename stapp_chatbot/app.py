@@ -1,7 +1,13 @@
 import streamlit as st
 import pya3rt
+import environ
 
-apikey = "DZZbHdU8i6DyNufqdG2UIvoHH0qtCewG"
+env = environ.Env()
+env.read_env(os.path.join(os.path.dirname(
+    os.path.dirname(os.path.abspath(__file__))), '.env'))
+
+
+apikey = env("api_key")
 client = pya3rt.TalkClient(apikey)
 
 chat_logs = []
